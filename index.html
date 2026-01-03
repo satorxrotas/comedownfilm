@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Come Down</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Avenir', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .scroll-indicator {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 8px;
+            height: 100vh;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .scroll-progress {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 8px;
+            height: 0%;
+            background: linear-gradient(to bottom, #f4c542 0%, #e84545 100%);
+            z-index: 1001;
+            transition: height 0.1s ease;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .presenter-text {
+            font-size: 14px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 60px;
+            font-weight: 400;
+            color: #e0e0e0;
+        }
+
+        .presenter-text strong {
+            font-weight: 600;
+        }
+
+        .title-container {
+            margin-bottom: 60px;
+        }
+
+        .title-word {
+            font-family: Impact, 'Arial Black', sans-serif;
+            font-size: clamp(80px, 20vw, 280px);
+            line-height: 0.9;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            display: block;
+            margin: 0;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        .title-word.come {
+            color: #f4c542;
+            animation: slideInCome 1s ease-out 0.5s forwards;
+        }
+
+        .title-word.down {
+            color: #e84545;
+            animation: slideInDown 1s ease-out 1s forwards;
+        }
+
+        @keyframes slideInCome {
+            0% {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.8) rotate(-5deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1) rotate(0deg);
+            }
+        }
+
+        @keyframes slideInDown {
+            0% {
+                opacity: 0;
+                transform: translateY(50px) scale(0.8) rotate(5deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1) rotate(0deg);
+            }
+        }
+
+        .director-text {
+            font-size: 16px;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            font-weight: 300;
+            color: #e0e0e0;
+        }
+
+        .director-text strong {
+            font-weight: 500;
+        }
+
+        .scroll-arrow {
+            margin-top: 60px;
+            font-size: 32px;
+            color: #e0e0e0;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(15px);
+            }
+        }
+
+        /* Intro Section */
+        .intro-section {
+            background-color: #e84545;
+            padding: 80px 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .intro-text-container {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .intro-title {
+            font-family: Impact, 'Arial Black', sans-serif;
+            font-size: clamp(60px, 12vw, 180px);
+            color: #f4c542;
+            font-weight: 900;
+            line-height: 0.9;
+            letter-spacing: -0.02em;
+        }
+
+        .intro-quote {
+            font-family: 'Myriad Pro', 'Myriad', sans-serif;
+            font-size: clamp(16px, 2vw, 24px);
+            line-height: 1.5;
+            color: #ffffff;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+
+        .intro-description {
+            font-family: 'Myriad Pro', 'Myriad', sans-serif;
+            font-size: clamp(16px, 2vw, 22px);
+            line-height: 1.6;
+            color: #ffffff;
+        }
+
+        .intro-description em {
+            font-style: italic;
+        }
+
+        .intro-image-container {
+            position: relative;
+        }
+
+        .intro-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+        }
+
+        .image-label {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-family: Impact, 'Arial Black', sans-serif;
+            font-size: clamp(32px, 5vw, 60px);
+            font-weight: 900;
+            letter-spacing: -0.02em;
+        }
+
+        .image-label .come {
+            color: #f4c542;
+        }
+
+        .image-label .down {
+            color: #e84545;
+        }
+
+        .image-label .number {
+            color: #ffffff;
+            margin-left: 10px;
+        }
+
+        /* Responsive adjustments for intro section */
+        @media (max-width: 968px) {
+            .intro-section {
+                grid-template-columns: 1fr;
+                padding: 60px 30px;
+                gap: 40px;
+            }
+
+            .intro-text-container {
+                gap: 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .intro-section {
+                padding: 40px 20px;
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .presenter-text {
+                font-size: 11px;
+                letter-spacing: 2px;
+                margin-bottom: 40px;
+            }
+
+            .title-container {
+                margin-bottom: 40px;
+            }
+
+            .director-text {
+                font-size: 12px;
+                letter-spacing: 4px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .presenter-text {
+                font-size: 10px;
+                letter-spacing: 1.5px;
+            }
+
+            .director-text {
+                font-size: 10px;
+                letter-spacing: 3px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-indicator"></div>
+    <div class="scroll-progress"></div>
+    
+    <section class="hero">
+        <p class="presenter-text">
+            <strong>North Coast Entertainment</strong> presents
+        </p>
+
+        <div class="title-container">
+            <h1 class="title-word come">COME</h1>
+            <h1 class="title-word down">DOWN</h1>
+        </div>
+
+        <p class="director-text">
+            A <strong>Michael Greenberg</strong> film
+        </p>
+
+        <div class="scroll-arrow">↓</div>
+    </section>
+
+    <section class="intro-section">
+        <div class="intro-text-container">
+            <h2 class="intro-title">INTRO</h2>
+            
+            <p class="intro-quote">
+                "A sleep-deprived addict, in a toxic relationship, teeters on the edge of self-destruction when his desperate need for a fix leads him down a path that puts his moral compass to the test."
+            </p>
+            
+            <p class="intro-description">
+                <em>Come Down</em> is a contemporary Neo-Noir/Thriller, which focusses on the struggles of addiction and substance abuse, following a protagonist that wants to change in a world that won't let him.
+            </p>
+        </div>
+
+        <div class="intro-image-container">
+            <img src="page_2_image_1.png" alt="Come Down Scene" class="intro-image">
+            <div class="image-label">
+                <span class="come">COME</span> <span class="down">DOWN</span> <span class="number">01</span>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Update scroll progress indicator
+        window.addEventListener('scroll', () => {
+            const scrollProgress = document.querySelector('.scroll-progress');
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            const scrollPercentage = (scrollTop / (documentHeight - windowHeight)) * 100;
+            scrollProgress.style.height = scrollPercentage + '%';
+        });
+    </script>
+</body>
+</html>
