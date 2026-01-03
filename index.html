@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Come Down</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Avenir', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .scroll-indicator {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 8px;
+            height: 100vh;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .scroll-progress {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 8px;
+            height: 0%;
+            background: linear-gradient(to bottom, #f4c542 0%, #e84545 100%);
+            z-index: 1001;
+            transition: height 0.1s ease;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .presenter-text {
+            font-size: 14px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 60px;
+            font-weight: 400;
+            color: #e0e0e0;
+        }
+
+        .presenter-text strong {
+            font-weight: 600;
+        }
+
+        .title-container {
+            margin-bottom: 60px;
+        }
+
+        .title-word {
+            font-family: Impact, 'Arial Black', sans-serif;
+            font-size: clamp(80px, 20vw, 280px);
+            line-height: 0.9;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            display: block;
+            margin: 0;
+            opacity: 0;
+        }
+
+        .title-word.come {
+            color: #f4c542;
+            animation: fadeIn 1.5s ease-out 0.5s forwards;
+        }
+
+        .title-word.down {
+            color: #e84545;
+            animation: fadeIn 1.5s ease-out 1.2s forwards;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .director-text {
+            font-size: 16px;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            font-weight: 300;
+            color: #e0e0e0;
+        }
+
+        .director-text strong {
+            font-weight: 500;
+        }
+
+        .scroll-arrow {
+            margin-top: 60px;
+            font-size: 32px;
+            color: #e0e0e0;
+            animation: bounce 2s infinite;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .scroll-arrow:hover {
+            color: #f4c542;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(15px);
+            }
+        }
+
+        /* Intro Section */
+        .intro-section {
+            background-color: #e84545;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .intro-text-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 40px;
+            padding: 80px 60px;
+        }
+
+        .intro-title {
+            font-family: Impact, 'Arial Black', sans-serif;
+            font-size: clamp(60px, 12vw, 180px);
+            color: #f4c542;
+            font-weight: 900;
+            line-height: 0.9;
+            letter-spacing: -0.02em;
+            opacity: 0;
+            transition: opacity 1.5s ease-out;
+        }
+
+        .intro-title.visible {
+            opacity: 1;
+        }
+
+        .intro-quote {
+            font-family: 'Myriad Pro', 'Myriad', sans-serif;
+            font-size: clamp(16px, 2vw, 24px);
+            line-height: 1.5;
+            color: #ffffff;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+
+        .intro-description {
+            font-family: 'Myriad Pro', 'Myriad', sans-serif;
+            font-size: clamp(16px, 2vw, 22px);
+            line-height: 1.6;
+            color: #ffffff;
+        }
+
+        .intro-description em {
+            font-style: italic;
+        }
+
+        .intro-image-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .intro-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+
+        .image-label {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            font-family: Impact, 'Arial Black', sans-serif;
+            font-size: clamp(32px, 5vw, 60px);
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            z-index: 10;
+        }
+
+        .image-label .come {
+            color: #f4c542;
+        }
+
+        .image-label .down {
+            color: #c41e1e;
+        }
+
+        .image-label .number {
+            color: #ffffff;
+            margin-left: 10px;
+        }
+
+        .image-label .label-arrow {
+            color: #ffffff;
+            margin-left: 15px;
+            font-size: 0.8em;
+            display: inline-block;
+            animation: bounce 2s infinite;
+            cursor: pointer;
+        }
+
+        /* Responsive adjustments for intro section */
+        @media (max-width: 968px) {
+            .intro-section {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 60vh;
+                min-height: auto;
+            }
+
+            .intro-text-container {
+                gap: 30px;
+                padding: 60px 30px;
+            }
+
+            .image-label {
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .intro-text-container {
+                padding: 40px 20px;
+            }
+
+            .intro-section {
+                grid-template-rows: auto 50vh;
+            }
+
+            .image-label {
+                bottom: 15px;
+                right: 15px;
+            }
+        }
+
+        /* Tone Section */
+        .tone-section {
+            background-color: #f4c542;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .tone-text-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 30px;
+            padding: 80px 60px;
+        }
+
+        .tone-title {
+            font-family: Impact, 'Arial Black', sans-serif;
+            font-size: clamp(60px, 12vw, 180px);
+            color: #e84545;
+            font-weight: 900;
+            line-height: 0.9;
+            letter-spacing: -0.02em;
+            opacity: 0;
+            transition: opacity 1.5s ease-out;
+        }
+
+        .tone-title.visible {
+            opacity: 1;
+        }
+
+        .tone-text {
+            font-family: 'Myriad Pro', 'Myriad', sans-serif;
+            font-size: clamp(16px, 2vw, 22px);
+            line-height: 1.6;
+            color: #000000;
+        }
+
+        .tone-text em {
+            font-style: italic;
+        }
+
+        .tone-quote {
+            font-family: 'Myriad Pro', 'Myriad', sans-serif;
+            font-size: clamp(18px, 2.2vw, 26px);
+            line-height: 1.5;
+            color: #000000;
+            font-style: italic;
+            margin-top: 20px;
+        }
+
+        .tone-images-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 2fr 1fr;
+            gap: 0;
+            position: relative;
+            height: 100vh;
+        }
+
+        .tone-image:first-child {
+            grid-column: 1;
+            grid-row: 1;
+        }
+
+        .tone-image:nth-child(2) {
+            grid-column: 2;
+            grid-row: 1;
+        }
+
+        .tone-image:nth-child(3) {
+            grid-column: 3;
+            grid-row: 1;
+        }
+
+        .tone-image:nth-child(4) {
+            grid-column: 1 / 4;
+            grid-row: 2;
+            display: block;
+        }
+
+        .tone-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .tone-image:first-child {
+            object-position: center center;
+        }
+
+        .tone-image:nth-child(2) {
+            object-position: center center;
+        }
+
+        .tone-image:nth-child(3) {
+            object-position: center center;
+        }
+
+        .tone-image:nth-child(4) {
+            object-position: center center;
+        }
+
+        .tone-label {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            font-family: Impact, 'Arial Black', sans-serif;
+            font-size: clamp(32px, 5vw, 60px);
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            z-index: 10;
+        }
+
+        .tone-label .come {
+            color: #f4c542;
+        }
+
+        .tone-label .down {
+            color: #c41e1e;
+        }
+
+        .tone-label .number {
+            color: #ffffff;
+            margin-left: 10px;
+        }
+
+        .tone-label .label-arrow {
+            color: #ffffff;
+            margin-left: 15px;
+            font-size: 0.8em;
+            display: inline-block;
+            animation: bounce 2s infinite;
+            cursor: pointer;
+        }
+
+        /* Responsive adjustments for tone section */
+        @media (max-width: 968px) {
+            .tone-section {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 60vh;
+                min-height: auto;
+            }
+
+            .tone-text-container {
+                gap: 25px;
+                padding: 60px 30px;
+            }
+
+            .tone-label {
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .tone-text-container {
+                padding: 40px 20px;
+            }
+
+            .tone-section {
+                grid-template-rows: auto 50vh;
+            }
+
+            .tone-label {
+                bottom: 15px;
+                right: 15px;
+            }
+        }
+
+        /* Visuals Section */
+        .visuals-section {
+            background-color: #000000;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .visuals-text-container {
+            background-color: #e84545;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 40px;
+            padding: 80px 60px;
+        }
+
+        .visuals-title {
+            font-family: Impact, 'Arial Black', sans-serif;
+            font-size: clamp(60px, 12vw, 180px);
+            color: #f4c542;
+            font-weight: 900;
+            line-height: 0.9;
+            letter-spacing: -0.02em;
+            opacity: 0;
+            transition: opacity 1.5s ease-out;
+        }
+
+        .visuals-title.visible {
+            opacity: 1;
+        }
+
+        .visuals-text {
+            font-family: 'Myriad Pro', 'Myriad', sans-serif;
+            font-size: clamp(18px, 2.2vw, 24px);
+            line-height: 1.6;
+            color: #ffffff;
+        }
+
+        .visuals-text em {
+            font-style: italic;
+        }
+
+        .visuals-images-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: repeat(4, 1fr);
+            gap: 0;
+            position: relative;
+        }
+
+        /* Image 1 - top right large */
+        .visuals-image:nth-child(1) {
+            grid-column: 2 / 4;
+            grid-row: 1 / 3;
+        }
+
+        /* Image 2 - left second row */
+        .visuals-image:nth-child(2) {
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        /* Image 3 - left third row */
+        .visuals-image:nth-child(3) {
+            grid-column: 1;
+            grid-row: 3;
+        }
+
+        /* Image 4 - left fourth row */
+        .visuals-image:nth-child(4) {
+            grid-column: 1;
+            grid-row: 4;
+        }
+
+        /* Image 5 - right third row spanning 2 columns */
+        .visuals-image:nth-child(5) {
+            grid-column: 2 / 4;
+            grid-row: 3;
+        }
+
+        /* Image 6 - middle bottom */
+        .visuals-image:nth-child(6) {
+            grid-column: 2;
+            grid-row: 4;
+        }
+
+        /* Image 7 - right bottom */
+        .visuals-image:nth-child(7) {
+            grid-column: 3;
+            grid-row: 4;
+        }
+
+        .visuals-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+
+        .visuals-label {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            font-family: Impact, 'Arial Black', sans-serif;
+            font-size: clamp(32px, 5vw, 60px);
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            z-index: 10;
+        }
+
+        .visuals-label .come {
+            color: #f4c542;
+        }
+
+        .visuals-label .down {
+            color: #c41e1e;
+        }
+
+        .visuals-label .number {
+            color: #ffffff;
+            margin-left: 10px;
+        }
+
+        .visuals-label .label-arrow {
+            color: #ffffff;
+            margin-left: 15px;
+            font-size: 0.8em;
+            display: inline-block;
+            animation: bounce 2s infinite;
+            cursor: pointer;
+        }
+
+        /* Responsive adjustments for visuals section */
+        @media (max-width: 968px) {
+            .visuals-section {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto;
+                min-height: auto;
+            }
+
+            .visuals-text-container {
+                gap: 30px;
+                padding: 60px 30px;
+            }
+
+            .visuals-images-container {
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: repeat(4, 150px);
+            }
+
+            .visuals-image:nth-child(1) {
+                grid-column: 1 / 3;
+                grid-row: 1;
+            }
+
+            .visuals-image:nth-child(5) {
+                grid-column: 1 / 3;
+                grid-row: 3;
+            }
+
+            .visuals-label {
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .visuals-text-container {
+                padding: 40px 20px;
+            }
+
+            .visuals-label {
+                bottom: 15px;
+                right: 15px;
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .presenter-text {
+                font-size: 11px;
+                letter-spacing: 2px;
+                margin-bottom: 40px;
+            }
+
+            .title-container {
+                margin-bottom: 40px;
+            }
+
+            .director-text {
+                font-size: 12px;
+                letter-spacing: 4px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .presenter-text {
+                font-size: 10px;
+                letter-spacing: 1.5px;
+            }
+
+            .director-text {
+                font-size: 10px;
+                letter-spacing: 3px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-indicator"></div>
+    <div class="scroll-progress"></div>
+    
+    <section class="hero">
+        <p class="presenter-text">
+            <strong>North Coast Entertainment</strong> presents
+        </p>
+
+        <div class="title-container">
+            <h1 class="title-word come">COME</h1>
+            <h1 class="title-word down">DOWN</h1>
+        </div>
+
+        <p class="director-text">
+            A <strong>Michael Greenberg</strong> film
+        </p>
+
+        <div class="scroll-arrow">↓</div>
+    </section>
+
+    <section class="intro-section">
+        <div class="intro-text-container">
+            <h2 class="intro-title">INTRO</h2>
+            
+            <p class="intro-quote">
+                "A sleep-deprived addict, in a toxic relationship, teeters on the edge of self-destruction when his desperate need for a fix leads him down a path that puts his moral compass to the test."
+            </p>
+            
+            <p class="intro-description">
+                <em>Come Down</em> is a contemporary Neo-Noir/Thriller, which focusses on the struggles of addiction and substance abuse, following a protagonist that wants to change in a world that won't let him.
+            </p>
+        </div>
+
+        <div class="intro-image-container">
+            <img src="page_2_image_1.png" alt="Come Down Scene" class="intro-image">
+            <div class="image-label">
+                <span class="come">COME</span> <span class="down">DOWN</span> <span class="number">01</span> <span class="label-arrow">↓</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="tone-section">
+        <div class="tone-text-container">
+            <h2 class="tone-title">TONE</h2>
+            
+            <p class="tone-text">
+                Films that inspired <em>Come Down</em> are <em>Good Time</em> (2017, Safdie Brothers), <em>Taxi Driver</em> (1976, Martin Scorsese) and <em>Pulp Fiction</em> (1994, Quentin Tarantino), along with the absurd black comedy found in a variety of <em>Coen brother</em> films.
+            </p>
+            
+            <p class="tone-text">
+                The story of <em>Come Down</em> is told through an intense POV, with noir styled voice over. We never leave the mind of our protagonist, <em>Donnie Malone</em>, through a journey that takes place over a 24 hour period.
+            </p>
+
+            <div class="tone-quote">
+                <p>"...That's the thing about Adderall... It makes you fucking numb....</p>
+                <p style="margin-top: 20px;">....I couldn't cry if I wanted to... I hit the fucking jackpot....</p>
+                <p style="margin-top: 20px;">....I got everything I ever wanted.... but her."</p>
+            </div>
+        </div>
+
+        <div class="tone-images-container">
+            <img src="page_3_image_1.png" alt="Come Down Scene 1" class="tone-image">
+            <img src="page_3_image_2.png" alt="Come Down Scene 2" class="tone-image">
+            <img src="page_3_image_3.png" alt="Come Down Scene 3" class="tone-image">
+            <img src="page_3_image_4.png" alt="Come Down Scene 4" class="tone-image">
+            <div class="tone-label">
+                <span class="come">COME</span> <span class="down">DOWN</span> <span class="number">02</span> <span class="label-arrow">↓</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="visuals-section">
+        <div class="visuals-text-container">
+            <h2 class="visuals-title">VISUALS</h2>
+            
+            <p class="visuals-text">
+                <em>Come Down</em> will have a dark, gritty and colorful visual style, similar to the many classics in the Neo-Noir/Thriller genre.
+            </p>
+            
+            <p class="visuals-text">
+                It will be digitally shot in an aspect ratio of 2.39 and embrace the colors and grain of Kodak 35mm motion picture film.
+            </p>
+        </div>
+
+        <div class="visuals-images-container">
+            <img src="page_4_image_1.png" alt="Come Down Visual 1" class="visuals-image">
+            <img src="page_4_image_2.png" alt="Come Down Visual 2" class="visuals-image">
+            <img src="page_4_image_3.png" alt="Come Down Visual 3" class="visuals-image">
+            <img src="page_4_image_4.png" alt="Come Down Visual 4" class="visuals-image">
+            <img src="page_4_image_5.png" alt="Come Down Visual 5" class="visuals-image">
+            <img src="page_4_image_6.png" alt="Come Down Visual 6" class="visuals-image">
+            <img src="page_4_image_7.png" alt="Come Down Visual 7" class="visuals-image">
+            <div class="visuals-label">
+                <span class="come">COME</span> <span class="down">DOWN</span> <span class="number">03</span> <span class="label-arrow">↓</span>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Update scroll progress indicator
+        window.addEventListener('scroll', () => {
+            const scrollProgress = document.querySelector('.scroll-progress');
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            const scrollPercentage = (scrollTop / (documentHeight - windowHeight)) * 100;
+            scrollProgress.style.height = scrollPercentage + '%';
+        });
+
+        // Smooth scroll to intro section when hero arrow is clicked
+        const scrollArrow = document.querySelector('.scroll-arrow');
+        const introSection = document.querySelector('.intro-section');
+        
+        scrollArrow.addEventListener('click', () => {
+            introSection.scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+        });
+
+        // Smooth scroll to tone section when intro arrow is clicked
+        const introArrow = document.querySelector('.label-arrow');
+        const toneSection = document.querySelector('.tone-section');
+        
+        if (introArrow && toneSection) {
+            introArrow.addEventListener('click', () => {
+                toneSection.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        }
+
+        // Intersection Observer for INTRO title animation
+        const introTitle = document.querySelector('.intro-title');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.3
+        });
+
+        if (introTitle) {
+            observer.observe(introTitle);
+        }
+
+        // Intersection Observer for TONE title animation
+        const toneTitle = document.querySelector('.tone-title');
+        
+        if (toneTitle) {
+            observer.observe(toneTitle);
+        }
+
+        // Intersection Observer for VISUALS title animation
+        const visualsTitle = document.querySelector('.visuals-title');
+        
+        if (visualsTitle) {
+            observer.observe(visualsTitle);
+        }
+
+        // Smooth scroll to visuals section when tone arrow is clicked
+        const toneArrow = document.querySelector('.tone-label .label-arrow');
+        const visualsSection = document.querySelector('.visuals-section');
+        
+        if (toneArrow && visualsSection) {
+            toneArrow.addEventListener('click', () => {
+                visualsSection.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        }
+    </script>
+</body>
+</html>
